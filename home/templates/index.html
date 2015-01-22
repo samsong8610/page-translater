@@ -1,0 +1,36 @@
+{% load staticfiles %}
+{% load url from future %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Web Translator</title>
+		<meta charset="utf-8" />
+		<link type="text/css" rel="stylesheet" href="{% static 'css/home.css' %}" />
+	</head>
+	<body>
+		<div id="header">
+			<form id="fetch_form" action="" method="get">
+				Link: <input type="text" maxlength="128" id="url" name="url" placeholder="Input a full page url address, such as http://hello2.sinaapp.com/static/test.html" value="{{ url }}" />
+				<input type="submit" id="fetch" value="Translate" /><br />
+				<input type="radio" name="to" value="ar" {% if to == "ar" %}checked{% endif %}>Arabic</input>
+				<input type="radio" name="to" value="zh-CHT" {% if to == "zh-CHT" %}checked{% endif %}>Chinese Traditional</input>
+				<input type="radio" name="to" value="en" {% if not to or to == "en" %}checked{% endif %}>English</input>
+				<input type="radio" name="to" value="fr" {% if to == "fr" %}checked{% endif %}>French</input>
+				<input type="radio" name="to" value="de" {% if to == "de" %}checked{% endif %}>German</input>
+				<input type="radio" name="to" value="it" {% if to == "it" %}checked{% endif %}>Italian</input>
+				<input type="radio" name="to" value="ja" {% if to == "ja" %}checked{% endif %}>Japanese</input>
+				<input type="radio" name="to" value="ko" {% if to == "ko" %}checked{% endif %}>Korean</input>
+				<input type="radio" name="to" value="ru" {% if to == "ru" %}checked{% endif %}>Russian</input>
+				<input type="radio" name="to" value="es" {% if to == "es" %}checked{% endif %}>Spanish</input>
+		</div>
+		<div id="main">
+			<p><strong>Translation Preview</strong>{% if url %}<a href="{% url 'fetch' %}?url={{ url }}&to={{ to }}" target="_blank">Open in a new window</a>{% endif %}</p>
+			<p>
+			<iframe scrolling="true" id="content" width="100%" height="480" src="{% if url %}{% url 'fetch' %}?url={{ url }}&to={{ to }}{% endif %}" > 
+				</iframe>
+			</p>
+		</div>
+		<div id="footer">
+		</div>
+	</body>
+</html>

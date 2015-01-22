@@ -1,0 +1,16 @@
+name: helloworld
+version: 2
+libraries:
+- name: django
+  version: "1.4"
+
+- name: lxml
+  version: "2.3.4"
+
+handlers:
+- url: /static/
+  static_path: static
+  gzip: on
+
+- url: /favicon.ico
+  static_path: favicon.ico
