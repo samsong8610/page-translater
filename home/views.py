@@ -1,7 +1,7 @@
 # Create your views here.
 import bs4
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseServerError
 from django.http import Http404
 from django.shortcuts import render, redirect
 import urllib
@@ -20,24 +20,28 @@ def index(request):
 
 def fetch(request):
     target = request.GET.get('url', None)
-    if target is None:
-        response = HttpResponse()
-        response.status_code = 400
+    if not target:
+        response = HttpResponseBadRequest()
         return response
     to = request.GET.get('to', 'en')
     print('Translate %s to %s' % (target, to))
     page = ''
-    if target:
-        if not target.startswith('http'):
-            target = 'http://' + target
+    if not target.startswith('http'):
+        target = 'http://' + target
+    try:
         page = _fetch_link(target)
-        parts = list(urlparse.urlsplit(target))
-        # clean path fragement and params
-        parts[2] = '/'
-        parts[3] = ''
-        parts[4] = ''
-        base = urlparse.urlunsplit(parts)
+    except Exception:
+        return HttpResponseServerError('Fetch %s failed' % target)
+    parts = list(urlparse.urlsplit(target))
+    # clean path fragement and params
+    parts[2] = '/'
+    parts[3] = ''
+    parts[4] = ''
+    base = urlparse.urlunsplit(parts)
+    try:
         translated = _translate(page, to, 'zh-CHS', base)
+    except Exception as e:
+        return HttpResponseServerError('Translate failed: %s' % e)
     return HttpResponse(translated)
 
 def _fetch_link(link):
